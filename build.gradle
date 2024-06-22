@@ -1,0 +1,60 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.10'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.netflix.dgs.codegen' version '5.9.0'
+    id 'java'
+}
+
+group = 'com.graphql'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    javaVersion = '17'
+    junitVersion = '5.9.2'
+    projectSurefireVersion = '3.0.0-M5'
+    graphqlCodegenPluginVersion = '1.61.0'
+    dgsFrameworkVersion = '8.2.2'
+    dgsCodegenSharedCoreVersion = '5.12.4'
+    lombokVersion = '1.18.30'
+    jacksonDatabindVersion = '2.15.0'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:${dgsFrameworkVersion}"
+    }
+    dependencies {
+        // Other dependencies can be added here if needed
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-graphql'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'io.github.graphql-java:graphql-java-annotations:21.1'
+    //implementation 'com.netflix.graphql.dgs:graphql-dgs-platform-dependencies'
+    //implementation 'com.netflix.graphql.dgs.codegen:graphql-dgs-codegen-shared-core'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework:spring-webflux'
+    implementation 'org.springframework.graphql:spring-graphql'
+
+    runtimeOnly 'mysql:mysql-connector-java:8.0.27'
+    implementation 'org.flywaydb:flyway-core' // Updated dependency for Flyway
+}
+
+// Custom task for generating Java classes from GraphQL schema
+generateJava {
+    schemaPaths = ["${projectDir}/src/main/resources/graphql"] // List of directories containing schema files
+    packageName = 'com.example.packagename' // Replace with your actual package name
+    generateClient = true // Enable generating the type-safe query API
+}
